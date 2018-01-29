@@ -6,10 +6,14 @@ var diameter4=60;
 var diameter5=80;
 var diameter6=100;
 
-var MAX_DIM = 100;
+const MAX_DIM = 100;
+const WIDTH = window.innerWidth;
+const OFFSET_WP = 0.944882;
+const HEIGHT = window.innerHeight;
+const OFFSET_HP = 0.901962;
 
 function setup() {
-  createCanvas(1016, 509);
+  createCanvas(WIDTH, HEIGHT);
   photo = loadImage("data/worldmap1.png");
   frameRate(20);
 }
@@ -25,8 +29,10 @@ function wave( X, Y, diameter){
 
 function earthquake( lat, lon ) {
   
-  var X=((960/360.0)*(180+lon));
-  var Y=((460/180.0)*(90-lat));
+  var X=((WIDTH  * OFFSET_WP)/360.0) * (180 + lon);
+  var Y=((HEIGHT * OFFSET_HP)/180.0) * ( 90 - lat);
+  
+  console.log((WIDTH*OFFSET_WP));
   
   wave(X,Y,diameter1);
   wave(X,Y,diameter2);
@@ -70,6 +76,7 @@ function draw() {
   else
     diameter6=0;
     
+  photo.resize(WIDTH, HEIGHT);
   image(photo, 0, 0);
   
   earthquake (22,122);
