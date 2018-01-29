@@ -1,4 +1,4 @@
-var photo;
+var photo; // Variabile che salva la foto
 var diameter1=0;
 var diameter2=20;
 var diameter3=40;
@@ -6,18 +6,35 @@ var diameter4=60;
 var diameter5=80;
 var diameter6=100;
 
-const MAX_DIM = 100;
-const WIDTH = window.innerWidth;
-const OFFSET_WP = 0.944882;
+const MAX_DIM = 100; // E il max diameter del cerchio
+
+const WIDTH = window.innerWidth;// Il calcolo del largezza del pagina Web
+const OFFSET_WP = 0.944882;// fatto delle prove
 const HEIGHT = window.innerHeight;
 const OFFSET_HP = 0.901962;
+
+var earthquakes = [];
 
 function setup() {
   createCanvas(WIDTH, HEIGHT);
   photo = loadImage("data/worldmap1.png");
   frameRate(20);
+  const URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson";//website of earthquake data
+  loadJSON(URL, initArray); //function to load data
+  
 }
 
+function initArray(data) {
+  for(var i=0; i<data.features.length; i++) {
+    const item = data.features[i];
+    var   coords = {
+              x: item.geometry.coordinates[0],
+              y: item.geometry.coordinates[1]
+          };
+    
+    earthquakes.push(coords);
+  }
+}
 
 function wave( X, Y, diameter){
   
@@ -79,11 +96,10 @@ function draw() {
   photo.resize(WIDTH, HEIGHT);
   image(photo, 0, 0);
   
-  earthquake (22,122);
-  earthquake (46,12);
-  earthquake (13, 128);
-  earthquake (-10, -52);
-  earthquake (36, -87);
-  earthquake (26, 30);
+  for(var i=0; i<earthquakes.length; i++) {
+    const item = earthquakes[i];
+    earthquake(item.y, item.x);
+  }
+
   
 }
