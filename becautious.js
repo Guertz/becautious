@@ -1,4 +1,4 @@
-var photo;
+var photo; // Variabile che salva la foto
 var diameter1=0;
 var diameter2=20;
 var diameter3=40;
@@ -6,14 +6,35 @@ var diameter4=60;
 var diameter5=80;
 var diameter6=100;
 
-var MAX_DIM = 100;
+const MAX_DIM = 100; //E il max diameter del cerchio
+
+const WIDTH = window.innerWidth;// Il calcolo del largezza del pagina Web
+const OFFSET_WP = 0.944882;// fatto delle prove
+const HEIGHT = window.innerHeight;//Il calcolo del altezza del pagina Web
+const OFFSET_HP = 0.901962;
+
+var earthquakes = [];
 
 function setup() {
-  createCanvas(window.innerWidth, window.innerHeight);
-  photo = loadImage("data/worldmap1.png");
-  frameRate(20);
+  createCanvas(WIDTH, HEIGHT);
+  photo = loadImage("data/worldmap1.png");//background imagine for processing
+  frameRate(20);//the velocita of draw function (drawing)
+  const URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson";//website of earthquake data
+  loadJSON(URL, initArray); //function to load data
+  
 }
 
+function initArray(data) {
+  for(var i=0; i<data.features.length; i++) {
+    const item = data.features[i];
+    var   coords = {
+              x: item.geometry.coordinates[0],
+              y: item.geometry.coordinates[1]
+          };
+    
+    earthquakes.push(coords);
+  }
+}
 
 function wave( X, Y, diameter){
   
@@ -25,8 +46,8 @@ function wave( X, Y, diameter){
 
 function earthquake( lat, lon ) {
   
-  var X=((window.innerWidth/360.0)*(180+lon));
-  var Y=((window.innerHeight/180.0)*(90-lat));
+  var X=((WIDTH  * OFFSET_WP)/360.0) * (180 + lon);
+  var Y=((HEIGHT * OFFSET_HP)/180.0) * ( 90 - lat);
   
   wave(X,Y,diameter1);
   wave(X,Y,diameter2);
@@ -40,6 +61,8 @@ function earthquake( lat, lon ) {
 
 function draw() {
   
+  background(255,255,255);
+    
   if(diameter1<MAX_DIM )
     diameter1++;
   else
@@ -70,14 +93,13 @@ function draw() {
   else
     diameter6=0;
     
-  photo.resize(window.innerWidth, window.innerHeight);
+  photo.resize(WIDTH, HEIGHT);
   image(photo, 0, 0);
   
-  earthquake (22,122);
-  earthquake (46,12);
-  earthquake (13, 128);
-  earthquake (-10, -52);
-  earthquake (36, -87);
-  earthquake (26, 30);
+  for(var i=0; i<earthquakes.length; i++) { //its a loop 
+    const item = earthquakes[i];//
+    earthquake(item.y, item.x);
+  }
+
   
 }
